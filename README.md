@@ -1,4 +1,5 @@
-# Zaphiel: A steam spying toolkit! EVEN IF THEY DO NOT HAVE YOU ADDED!
+# Zaphkiel
+A steam spying toolkit! EVEN IF THEY DO NOT HAVE YOU ADDED!
 
 # How to use?
 You must simply get your webAPI key, put it in the input.
