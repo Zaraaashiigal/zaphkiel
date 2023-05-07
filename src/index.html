@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+   <head>
+
+      <!-- Charset, title, yadi, yada, yhareem, khareem etc. -->
+      <meta charset="UTF-8">
+      <title>Zaphkiel Steamspy</title>
+
+      <!-- Bootstrap, Custom CSS, Fonts. -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/slate/bootstrap.min.css">
+      <link rel="stylesheet" href="./index.css"/>
+
+   </head>
+   
+   <body>
+
+      <!-- Main Screen! ^^ -->
+      <div class="container align-items-center text-center">
+
+         <!-- Quote time. This one hits hard. Think about it...~ -->
+         <img id="logo" class="align-items-center text-center" alt="" src="./logo.png"/>
+         <p id="logoText" class="text-center">Zaphkiel</p>
+         <p id="quoteContent" class="text-center">"What political leaders decide, intelligence services tend to seek to justify."</p>
+         <p id="quoteAuthor"  class="text-end">Henry A. Kissinger</p>
+         
+
+         <!-- API Key Entrypoint. -->
+         <label for="steamAPIKeyInput" class="form-label"><i class="bi bi-steam"></i> API Key</label>
+         <input class="form-control"   type="password" id="steamAPIKeyInput" aria-describedby="steamAPIKeyInput">
+
+         <!-- SteamID Entrypoint. -->
+         <label for="steamIDInput"   class="form-label"><i class="bi bi-steam"></i> SteamID64</label>
+         <input class="form-control" id="steamIDInput" aria-describedby="steamIDAria">
+         
+         <!-- Attach the Spy. -->
+         <button type="submit" id="attachBtn" class="btn btn-primary">Attach to Scanner</button>
+            
+      </div>
+
+      <!-- Credit. -->
+      <div class="bottomContainer text-center">
+         <p id="credits" class="text-center">Made by Zarashigal</p>
+      </div>
+
+   </body>
+
+   <!-- Main Rendering JS. -->
+   <script type="text/javascript" src="./client.js"></script>
+
+</html>
