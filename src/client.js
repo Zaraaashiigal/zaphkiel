@@ -19,14 +19,21 @@ function attachSpy (apiKey, sID) {
     /* Setup timer */
     let ply = {
 
-        "sID"         : sID,
-        "gameCurrent" : "",
-        "gameOld"     : ""
+        "sID"               : sID,
+        "gameCurrent"       : "",
+        "gameOld"           : "",
+        "ipOld"             : "",
+        "ipCurrent"         : "",
+        "oldPersonastate"   : "",
+        "curPersonastate"   : "",
+        "oldComNum"         :  0,
+        "curComNum"         :  0
 
     };
 
     watchlist.push(ply);
-    setInterval ( (e) => { scan (apiKey) }, 5000);
+
+    setInterval ((e) => { scan (apiKey) }, 5000);
 
 }
 
@@ -34,44 +41,104 @@ function attachSpy (apiKey, sID) {
 function scan (apiKey, sID) {
 
     /* For everyone in the watchlist... */
-    
+
+    /* GetPlayerSummaries */
     for (const x of watchlist) {
 
-        /* Define endpoint */
+        /* Comment Endpoint. */
+        /* Fetch information -> handle it. */
+        fetch (`https://steamcommunity.com/comment/Profile/render/${x.sID}/-1/?start=0`).then ((e) => {
+            e.json().then (( (jsonData) => { handle ("Comments", x, jsonData) } ));
+        });
+
+        /* Summaries Endpoint. */
         let apiPoint = `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${x.sID}`;
 
         /* Fetch information -> handle it. */
         fetch (apiPoint).then ((e) => {
-            e.json().then (( (jsonData) => { handle (x, jsonData) } ));
+            e.json().then (( (jsonData) => { handle ("GetPlayerSummaries", x, jsonData) } ));
         });
 
     }
 
 }
 
-function handle (x, apiRes) {
+function handle (type, x, apiRes) {
 
     /* Handle api response. */
     if (!apiRes) {return} else {
         
-        /* Check if the old details match the new ones. */
-        x.gameOld = x.gameCurrent;
-        x.gameCurrent = apiRes.response.players[0].gameextrainfo;
+        /* Activity handler! */
+        if (type == "Comments") {
 
-        /* If the detail changed, log this. */
-        if (x.gameCurrent != x.gameOld) {
+            x.oldComNum = x.curComNum;
+            x.curComNum = apiRes.total_count;
 
-            let profile = {
-
-                "name"    :   apiRes.response.players[0].personaname,
-                "game"    :   apiRes.response.players[0].gameextrainfo,
-                "locale"  :   apiRes.response.players[0].loccountrycode
-
-            };
-
-            let notifOptions = [`[Zaphkiel] Target: ${profile.name}`,`Game: ${profile.game}\nCountry: ${profile.locale}`];
-            new window.Notification(notifOptions[0], {body: notifOptions[1]});
         }
-    
+
+        /* GetPlayerSummaries Handler. */
+        if (type === "GetPlayerSummaries") {
+
+            /* Check if the old details match the new ones. */
+            x.gameOld = x.gameCurrent;
+            x.gameCurrent = apiRes.response.players[0].gameextrainfo;
+
+            x.oldPersonastate = x.curPersonastate;
+            x.curPersonastate = apiRes.response.players[0].personastate;
+
+            /* If the detail changed, log this. */
+            if (x.curPersonastate != x.oldPersonastate || x.gameOld != x.gameCurrent || x.oldComNum != x.curComNum ) {
+                
+                /* Default to unknown. */
+                let personastate = "unknown";
+
+                /* Check Personastate */
+                switch (apiRes.response.players[0].personastate) {
+
+                    case 0:
+                        personastate = "Offline";    
+                        break;
+
+                    case 1:
+                        personastate = "Online";    
+                        break;
+
+                    case 2:
+                        personastate = "Busy";    
+                        break;
+
+                    case 3:
+                        personastate = "Away";    
+                        break;
+
+                    case 4:
+                        personastate = "Snooze";    
+                        break;
+
+                    case 5:
+                        personastate = "Looking for Trade";    
+                        break;
+
+                    case 6:
+                        personastate = "Looking for Game";    
+                        break;
+            
+                    default:
+                    break;
+                }
+
+                /* Log data from ISteamUser. */
+                x.name    =   apiRes.response.players[0].personaname;
+                x.game    =   apiRes.response.players[0].gameextrainfo;
+                x.locale  =   apiRes.response.players[0].loccountrycode;
+                x.state   =   personastate;
+
+                /* ISteamUser did something -> Send notif via zaphkiel. */
+                let notifOptions = [`Activity >> ${x.name}`, `Game: ${x.game}\nCountry: ${x.locale}\nStatus: ${x.state}\nComments (Total): ${x.curComNum}`];
+                new window.Notification(notifOptions[0], {body: notifOptions[1]});
+            
+            }
+        
+        }
     }
 }
