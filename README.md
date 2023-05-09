@@ -1,5 +1,7 @@
 # Zaphkiel
-A steam spying toolkit! EVEN IF THEY DO NOT HAVE YOU ADDED!
+A steam spying toolkit! EVEN IF THEY DO NOT HAVE YOU ADDED! <br />
+This will automatically update you with tray notifications based on what the activity of that person is. <br />
+You'll always be catching up with their doings throughout the day. Timestamp logfiles coming soon, so you can make out routines. ^^
 # How to use?
 npm install<br />
 npm start<br />
